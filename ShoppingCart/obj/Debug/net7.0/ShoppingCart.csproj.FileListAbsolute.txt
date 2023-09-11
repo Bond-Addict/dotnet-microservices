@@ -1,0 +1,6 @@
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.csproj.AssemblyReference.cache
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.GeneratedMSBuildEditorConfig.editorconfig
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.AssemblyInfoInputs.cache
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.AssemblyInfo.cs
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.csproj.CoreCompileInputs.cache
+/workspace/dotnet-microservices/ShoppingCart/obj/Debug/net7.0/ShoppingCart.MvcApplicationPartsAssemblyInfo.cache
