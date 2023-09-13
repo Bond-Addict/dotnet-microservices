@@ -35,7 +35,7 @@ Exercise: Get started with Razor Pages in ASP.NET Core
 ======================================================
 
 
-In this lab
+In this exercise
 ---------------
 
 1.  Prerequisites
@@ -68,6 +68,8 @@ Create a Razor Pages web app
 
     ``` 
     dotnet new webapp -o RazorPagesMovie
+
+    cd RazorPagesMovie
     ```
 
     The `dotnet new` command creates a new Razor Pages project in the
@@ -220,7 +222,7 @@ Part 2: add a model to a Razor Pages app in ASP.NET Core
 ========================================================
 
 
-In this lab
+In this exercise
 ---------------
 
 1.  Add a data
@@ -239,7 +241,7 @@ In this lab
 
 
 
-In this lab, classes are added for managing movies in a database.
+In this exercise, classes are added for managing movies in a database.
 The app\'s model classes use [Entity Framework Core (EF
 Core)] to work with the
 database. EF Core is an object-relational mapper (O/RM) that simplifies
@@ -297,7 +299,6 @@ The `Movie` class contains:
 
 Run the following .NET CLI commands one by one:
 
-
 ``` 
 dotnet tool uninstall --global dotnet-aspnet-codegenerator
 dotnet tool install --global dotnet-aspnet-codegenerator
@@ -309,6 +310,9 @@ dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 ```
+
+**Note:** Run commands one by one and ignore not found errors while running uninstall commands.
+
 
 The preceding commands add:
 
@@ -373,6 +377,7 @@ Add following code in `program.cs`:
 
 ``` 
 using Microsoft.EntityFrameworkCore;
+using RazorPagesMovie.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -423,26 +428,33 @@ The scaffold process creates the following files:
 
 The created files are explained in the next tutorial.
 
-The scaffold process adds the following highlighted code to the
+The scaffold process adds the following code to the
 `Program.cs` file:
 
 ```
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using RazorPagesMovie.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("RazorPagesMovieContext") ?? throw new InvalidOperationException("Connection string 'RazorPagesMovieContext' not found.")));
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("RazorPagesMovieContext")));
+}
+else
+{
+    builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductionMovieContext")));
+}
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -459,7 +471,7 @@ app.Run();
 ```
 
 
-The `Program.cs` changes are explained later in this lab.
+The `Program.cs` changes are explained later In this exercise.
 
 
 
@@ -603,6 +615,8 @@ highlighted code is added to the `Program.cs` file by the scaffolder:
 ```
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using RazorPagesMovie.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -633,11 +647,10 @@ app.Run();
 ```
 
 
-Part 3, scaffolded Razor Pages in ASP.NET Core
-==============================================
+#### Part 3, scaffolded Razor Pages in ASP.NET Core
 
 
-In this lab
+In this exercise
 ---------------
 
 1.  The Create, Delete, Details, and Edit
@@ -996,57 +1009,57 @@ HTML comments `<!-- -->`, Razor comments are not sent to the client.
     See the `Layout.cshtml` file if you have any problems:
 
     ```
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Movie</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/RazorPagesMovie.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-page="/Movies/Index">RpMovie</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+        <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Movie</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/RazorPagesMovie.styles.css" asp-append-version="true" />
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-page="/Movies/Index">RpMovie</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+            </nav>
+        </header>
         <div class="container">
-            &copy; 2023 - RazorPagesMovie - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2023 - RazorPagesMovie - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            </div>
+        </footer>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+    </html>
     ```
 
 5.  Test the **Home**, **RpMovie**, **Create**, **Edit**, and **Delete**
@@ -1227,24 +1240,6 @@ Examine the `Pages/Movies/Create.cshtml` Razor Page file:
 ```
 
 
--   Visual
-    Studio
--   Visual Studio Code / Visual Studio for
-    Mac
-
-
-Visual Studio displays the following tags in a distinctive bold font
-used for Tag Helpers:
-
--   `<form method="post">`
--   `<div asp-validation-summary="ModelOnly" class="text-danger"></div>`
--   `<label asp-for="Movie.Title" class="control-label"></label>`
--   `<input asp-for="Movie.Title" class="form-control" />`
--   `<span asp-validation-for="Movie.Title" class="text-danger"></span>`
-
-![VS17 view of Create.cshtml page](./images/th3.png)
-
-
 
 The following Tag Helpers are shown in the preceding markup:
 
@@ -1253,13 +1248,6 @@ The following Tag Helpers are shown in the preceding markup:
 -   `<label asp-for="Movie.Title" class="control-label"></label>`
 -   `<input asp-for="Movie.Title" class="form-control" />`
 -   `<span asp-validation-for="Movie.Title" class="text-danger"></span>`
-
-
-
-The `<form method="post">` element is a [Form Tag
-Helper].
-The Form Tag Helper automatically includes an [antiforgery
-token].
 
 The scaffolding engine creates Razor markup for each field in the model,
 except the ID, similar to the following:
@@ -1293,15 +1281,14 @@ the client-side.
 
 
 
-Part 4 of tutorial series on Razor Pages
-========================================
+Part 4 on Razor Pages
+=====================
 
 
-In this lab
+In this exercise
 ---------------
 
-1.  SQL Server Express
-    LocalDB
+1.  LocalDB
 2.  Seed the
     database
 
@@ -1316,6 +1303,7 @@ container in `Program.cs`:
 ``` 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using RazorPagesMovie.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -1347,7 +1335,7 @@ file.
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "RazorPagesMovieContext": "Data Source=RazorPagesMovie.Data.db"
+    "RazorPagesMovieContext": "Data Source=FILENAME"
   }
 }
 ```
@@ -1364,8 +1352,6 @@ SQLite
 ------
 
 
-The [SQLite](https://www.sqlite.org/) website states:
-
 > SQLite is a self-contained, high-reliability, embedded, full-featured,
 > public-domain, SQL database engine. SQLite is the most used database
 > engine in the world.
@@ -1375,7 +1361,7 @@ The [SQLite](https://www.sqlite.org/) website states:
 Seed the database
 -----------------
 
-Create a new class named `SeedData` in the *Models* folder with the
+Create a new class named `SeedData.cs` in the *Models* folder with the
 following code:
 
 
@@ -1530,9 +1516,7 @@ The following exception occurs when `Update-Database` has not been run:
 
 
 Delete all the records in the database so the seed method will run. Stop
-and start the app to seed the database. If the database isn\'t seeded,
-put a breakpoint on `if (context.Movie.Any())` and step through the
-code.
+and start the app to seed the database.
 
 The app shows the seeded data:
 
@@ -1543,7 +1527,7 @@ Part 5, update the generated pages in an ASP.NET Core app
 =========================================================
 
 
-In this lab
+In this exercise
 ---------------
 
 1.  Update the
@@ -1643,9 +1627,7 @@ in the `Pages/Movies/Index.cshtml` file.
 </table>
 ```
 
-[Tag
-Helpers]
-enable server-side code to participate in creating and rendering HTML
+`Tag Helpers` enable server-side code to participate in creating and rendering HTML
 elements in Razor files.
 
 In the preceding code, the [Anchor Tag
@@ -1654,7 +1636,7 @@ dynamically generates the HTML `href` attribute value from the Razor
 Page (the route is relative), the `asp-page`, and the route identifier
 (`asp-route-id`).
 
-Use **View Source** from a browser to examine the generated markup. A
+Use **View Source / Inspect** from a browser to examine the generated markup. A
 portion of the generated HTML is shown below:
 
 
@@ -1669,578 +1651,8 @@ portion of the generated HTML is shown below:
 </td>
 ```
 
-The dynamically generated links pass the movie ID with a [query
-string](https://launchschool.com/books/http/read/what_is_a_url). For
+The dynamically generated links pass the movie ID with a `query string`. For
 example, the `?id=1` in `https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Details?id=1`.
 
 
-### Add route template
-
-Update the Edit, Details, and Delete Razor Pages to use the `{id:int}`
-route template. Change the page directive for each of these pages from
-`@page` to `@page "{id:int}"`. Run the app and then view source.
-
-The generated HTML adds the ID to the path portion of the URL:
-
-
-
-
-
-``` 
-<td>
-  <a href="/Movies/Edit/1">Edit</a> |
-  <a href="/Movies/Details/1">Details</a> |
-  <a href="/Movies/Delete/1">Delete</a>
-</td>
-```
-
-A request to the page with the `{id:int}` route template that does
-**not** include the integer returns an HTTP 404 (not found) error. For
-example, `https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Details` returns a 404 error. To
-make the ID optional, append `?` to the route constraint:
-
-
-
-
-
-``` 
-@page "{id:int?}"
-```
-
-Test the behavior of `@page "{id:int?}"`:
-
-1.  Set the page directive in `Pages/Movies/Details.cshtml` to
-    `@page "{id:int?}"`.
-2.  Set a break point in
-    `public async Task<IActionResult> OnGetAsync(int? id)`, in
-    `Pages/Movies/Details.cshtml.cs`.
-3.  Navigate to `https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Details/`.
-
-With the `@page "{id:int}"` directive, the break point is never hit. The
-routing engine returns HTTP 404. Using `@page "{id:int?}"`, the
-`OnGetAsync` method returns `NotFound` (HTTP 404):
-
-
-
-
-
-``` 
-public async Task<IActionResult> OnGetAsync(int? id)
-{
-    if (id == null)
-    {
-        return NotFound();
-    }
-
-    Movie = await _context.Movie.FirstOrDefaultAsync(m => m.ID == id);
-
-    if (Movie == null)
-    {
-        return NotFound();
-    }
-    return Page();
-}
-```
-
-
-### Review concurrency exception handling
-
-
-Review the `OnPostAsync` method in the `Pages/Movies/Edit.cshtml.cs`
-file:
-
-
-
-
-
-``` 
-public async Task<IActionResult> OnPostAsync()
-{
-    if (!ModelState.IsValid)
-    {
-        return Page();
-    }
-
-    _context.Attach(Movie).State = EntityState.Modified;
-
-    try
-    {
-        await _context.SaveChangesAsync();
-    }
-    catch (DbUpdateConcurrencyException)
-    {
-        if (!MovieExists(Movie.Id))
-        {
-            return NotFound();
-        }
-        else
-        {
-            throw;
-        }
-    }
-
-    return RedirectToPage("./Index");
-}
-
-private bool MovieExists(int id)
-{
-  return _context.Movie.Any(e => e.Id == id);
-}
-```
-
-The previous code detects concurrency exceptions when one client deletes
-the movie and the other client posts changes to the movie.
-
-To test the `catch` block:
-
-1.  Set a breakpoint on `catch (DbUpdateConcurrencyException)`.
-2.  Select **Edit** for a movie, make changes, but don\'t enter
-    **Save**.
-3.  In another browser window, select the **Delete** link for the same
-    movie, and then delete the movie.
-4.  In the previous browser window, post changes to the movie.
-
-
-
-### Posting and binding review
-
-Examine the `Pages/Movies/Edit.cshtml.cs` file:
-
-
-
-
-``` 
-public class EditModel : PageModel
-{
-    private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
-
-    public EditModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
-    {
-        _context = context;
-    }
-
-    [BindProperty]
-    public Movie Movie { get; set; } = default!;
-
-    public async Task<IActionResult> OnGetAsync(int? id)
-    {
-        if (id == null || _context.Movie == null)
-        {
-            return NotFound();
-        }
-
-        var movie =  await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
-        if (movie == null)
-        {
-            return NotFound();
-        }
-        Movie = movie;
-        return Page();
-    }
-
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-
-        _context.Attach(Movie).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!MovieExists(Movie.Id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return RedirectToPage("./Index");
-    }
-
-    private bool MovieExists(int id)
-    {
-      return _context.Movie.Any(e => e.Id == id);
-    }
-}
-```
-
-When an HTTP GET request is made to the Movies/Edit page, for example,
-`https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Edit/3`:
-
--   The `OnGetAsync` method fetches the movie from the database and
-    returns the `Page` method.
--   The `Page` method renders the `Pages/Movies/Edit.cshtml` Razor Page.
-    The `Pages/Movies/Edit.cshtml` file contains the model directive
-    `@model RazorPagesMovie.Pages.Movies.EditModel`, which makes the
-    movie model available on the page.
--   The Edit form is displayed with the values from the movie.
-
-When the Movies/Edit page is posted:
-
--   The form values on the page are bound to the `Movie` property. The
-    `[BindProperty]` attribute enables [Model
-    binding].
-
-    
-
-    
-
-    ``` 
-    [BindProperty]
-    public Movie Movie { get; set; }
-    ```
-
--   If there are errors in the model state, for example, `ReleaseDate`
-    cannot be converted to a date, the form is redisplayed with the
-    submitted values.
-
--   If there are no model errors, the movie is saved.
-
-The HTTP GET methods in the Index, Create, and Delete Razor pages follow
-a similar pattern. The HTTP POST `OnPostAsync` method in the Create
-Razor Page follows a similar pattern to the `OnPostAsync` method in the
-Edit Razor Page.
-
-Part 6, add search to ASP.NET Core Razor Pages
-==============================================
-
-
-In this lab
----------------
-
-1.  Search by
-    genre
-2.  Next
-    steps
-
-In the following sections, searching movies by *genre* or *name* is
-added.
-
-Add the following highlighted code to `Pages/Movies/Index.cshtml.cs`:
-
-
-
-``` 
-public class IndexModel : PageModel
-{
-    private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
-
-    public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
-    {
-        _context = context;
-    }
-
-    public IList<Movie> Movie { get;set; }  = default!;
-
-    [BindProperty(SupportsGet = true)]
-    public string? SearchString { get; set; }
-
-    public SelectList? Genres { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? MovieGenre { get; set; }
-```
-
-In the previous code:
-
--   `SearchString`: Contains the text users enter in the search text
-    box. `SearchString` has the
-    [`[BindProperty]`]
-    attribute. `[BindProperty]` binds form values and query strings with
-    the same name as the property. `[BindProperty(SupportsGet = true)]`
-    is required for binding on HTTP GET requests.
--   `Genres`: Contains the list of genres. `Genres` allows the user to
-    select a genre from the list. `SelectList` requires
-    `using Microsoft.AspNetCore.Mvc.Rendering;`
--   `MovieGenre`: Contains the specific genre the user selects. For
-    example, \"Western\".
--   `Genres` and `MovieGenre` are used later in this lab.
-
-
-Warning
-
-For security reasons, you must opt in to binding `GET` request data to
-page model properties. Verify user input before mapping it to
-properties. Opting into `GET` binding is useful when addressing
-scenarios that rely on query string or route values.
-
-To bind a property on `GET` requests, set the
-[`[BindProperty]`]
-attribute\'s `SupportsGet` property to `true`:
-
-
-``` 
-[BindProperty(SupportsGet = true)]
-```
-
-
-Update the Index page\'s `OnGetAsync` method with the following code:
-
-
-
-``` 
-public async Task OnGetAsync()
-{
-    var movies = from m in _context.Movie
-                 select m;
-    if (!string.IsNullOrEmpty(SearchString))
-    {
-        movies = movies.Where(s => s.Title.Contains(SearchString));
-    }
-
-    Movie = await movies.ToListAsync();
-}
-```
-
-The first line of the `OnGetAsync` method creates a
-[LINQ]
-query to select the movies:
-
-
-
-
-
-``` 
-// using System.Linq;
-var movies = from m in _context.Movie
-             select m;
-```
-
-The query is only ***defined*** at this point, it has ***not*** been run
-against the database.
-
-If the `SearchString` property is not `null` or empty, the movies query
-is modified to filter on the search string:
-
-
-
-
-
-``` 
-if (!string.IsNullOrEmpty(SearchString))
-{
-    movies = movies.Where(s => s.Title.Contains(SearchString));
-}
-```
-
-The `s => s.Title.Contains()` code is a [Lambda
-Expression].
-Lambdas are used in method-based
-[LINQ]
-queries as arguments to standard query operator methods such as the
-[Where]
-method or `Contains`. LINQ queries are not executed when they\'re
-defined or when they\'re modified by calling a method, such as `Where`,
-`Contains`, or `OrderBy`. Rather, query execution is deferred. The
-evaluation of an expression is delayed until its realized value is
-iterated over or the `ToListAsync` method is called. See [Query
-Execution]
-for more information.
-
-
-**Note**
-
-The
-[Contains]
-method is run on the database, not in the C\# code. The case sensitivity
-on the query depends on the database and the collation. On SQL Server,
-`Contains` maps to [SQL
-LIKE],
-which is case insensitive. SQLite with the default collation is a
-mixture of case sensitive and case ***IN***sensitive, depending on the
-query.
-
-
-Navigate to the Movies page and append a query string such as
-`?searchString=Ghost` to the URL. For example,
-`https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies?searchString=Ghost`. The filtered movies
-are displayed.
-
-![Index view](./images/ghost8.png)
-
-If the following route template is added to the Index page, the search
-string can be passed as a URL segment. For example,
-`https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Ghost`.
-
-
-
-
-
-``` 
-@page "{searchString?}"
-```
-
-The preceding route constraint allows searching the title as route data
-(a URL segment) instead of as a query string value. The `?` in
-`"{searchString?}"` means this is an optional route parameter.
-
-![Index view with the word ghost added to the Url and a returned movie
-list of two movies, Ghostbusters and Ghostbusters
-2](./images/ghost_title_routedata8.png)
-
-The ASP.NET Core runtime uses [model
-binding]
-to set the value of the `SearchString` property from the query string
-(`?searchString=Ghost`) or route data
-(`https://PORT-YOUR_GITPOD_URL.gitpod.io/Movies/Ghost`). Model binding is ***not*** case
-sensitive.
-
-However, users cannot be expected to modify the URL to search for a
-movie. In this step, UI is added to filter movies. If you added the
-route constraint `"{searchString?}"`, remove it.
-
-Open the `Pages/Movies/Index.cshtml` file, and add the markup
-highlighted in the following code:
-
-
-
-
-
-``` 
-@page
-@model RazorPagesMovie.Pages.Movies.IndexModel
-
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-
-<form>
-    <p>
-        Title: <input type="text" asp-for="SearchString" />
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-
-<table class="table">
-    @*Markup removed for brevity.*@
-```
-
-The HTML `<form>` tag uses the following [Tag
-Helpers]:
-
--   Form Tag
-    Helper].
-    When the form is submitted, the filter string is sent to the
-    *Pages/Movies/Index* page via query string.
--   Input Tag
-    Helper]
-
-Save the changes and test the filter.
-
-![](./images/filter2.png)
-
-
-Search by genre
----------------
-
-
-Update the `Movies/Index.cshtml.cs` page `OnGetAsync` method with the
-following code:
-
-
-
-
-
-``` 
-public async Task OnGetAsync()
-{
-    // Use LINQ to get list of genres.
-    IQueryable<string> genreQuery = from m in _context.Movie
-                                    orderby m.Genre
-                                    select m.Genre;
-
-    var movies = from m in _context.Movie
-                 select m;
-
-    if (!string.IsNullOrEmpty(SearchString))
-    {
-        movies = movies.Where(s => s.Title.Contains(SearchString));
-    }
-
-    if (!string.IsNullOrEmpty(MovieGenre))
-    {
-        movies = movies.Where(x => x.Genre == MovieGenre);
-    }
-    Genres = new SelectList(await genreQuery.Distinct().ToListAsync());
-    Movie = await movies.ToListAsync();
-}
-```
-
-The following code is a LINQ query that retrieves all the genres from
-the database.
-
-
-
-
-
-``` 
-// Use LINQ to get list of genres.
-IQueryable<string> genreQuery = from m in _context.Movie
-                                orderby m.Genre
-                                select m.Genre;
-```
-
-The `SelectList` of genres is created by projecting the distinct genres.
-
-
-
-
-
-``` 
-Genres = new SelectList(await genreQuery.Distinct().ToListAsync());
-```
-
-### Add search by genre to the Razor Page
-
-Update the `Index.cshtml` [`<form>`
-element](https://developer.mozilla.org/docs/Web/HTML/Element/form) as
-highlighted in the following markup:
-
-
-
-
-
-``` 
-@page
-@model RazorPagesMovie.Pages.Movies.IndexModel
-
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-
-<form>
-    <p>
-        <select asp-for="MovieGenre" asp-items="Model.Genres">
-            <option value="">All</option>
-        </select>
-        Title: <input type="text" asp-for="SearchString" />
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-```
-
-Test the app by searching by genre, by movie title, and by both.
-
+In the next lab, we will look into ASP.NET Core MVC web development.

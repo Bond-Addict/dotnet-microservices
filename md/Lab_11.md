@@ -11,7 +11,7 @@ In this lab
 
 
 
-This is the first exercise of a lab that teaches ASP.NET Core MVC web
+This lab teaches ASP.NET Core MVC web
 development with controllers and views.
 
 At the end of the lab, you\'ll have an app that manages and displays
@@ -36,6 +36,8 @@ Create a web app
 
     ``` 
     dotnet new mvc -o MvcMovie
+
+    cd MvcMovie/
     ```
 
 
@@ -47,8 +49,7 @@ Create a web app
 
 Build and run the app by executing the following command in your terminal:
 
-
-`dotnet watch run`
+`dotnet run`
 
 
 Wait for the app to display that it\'s listening and then open a browser and
@@ -455,10 +456,7 @@ Change the title, footer, and menu link in the layout file
 
 
 Replace the content of the `Views/Shared/_Layout.cshtml` file with the
-following markup. The changes are highlighted:
-
-
-
+following markup:
 
 
 ``` 
@@ -848,28 +846,12 @@ Use the scaffolding tool to produce `Create`, `Read`, `Update`, and
 Open a command window in the project directory. The project directory is
 the directory that contains the `Program.cs` and `.csproj` files.
 
-On Linux, export the scaffold tool path:
-
-
-``` 
-export PATH=$HOME/.dotnet/tools:$PATH
-```
 
 Run the following command:
 
 
-
 ``` 
 dotnet aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovie.Data.MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider sqlite
-```
-
-
-
-Use the `h` switch to get help on the `aspnet-codegenerator controller` command:
-
-
-``` 
-dotnet aspnet-codegenerator controller -h
 ```
 
 
